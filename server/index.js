@@ -11,7 +11,12 @@ const alertRoutes = require('./routes/alerts');
 
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server);
+const io = new Server(server, {
+    cors: {
+        origin: "*",
+        methods: ["GET", "POST"]
+    }
+});
 
 const PORT = process.env.PORT || 3000;
 
@@ -55,6 +60,14 @@ function isCommandAllowed(cmd) {
     );
 }
 
+function transformCommand(cmd) {
+    const trimmed = cmd.trim();
+    if (trimmed === 'top') return 'top -bn1 | head -20';
+    if (trimmed === 'htop') return 'top -bn1 | head -20';
+    if (trimmed === 'ping') return 'ping -c 3 localhost';
+    return trimmed;
+}
+
 io.on('connection', (socket) => {
     console.log('Terminal connected:', socket.id);
     
@@ -78,7 +91,9 @@ io.on('connection', (socket) => {
         }
         
         const { spawn } = require('child_process');
-        const cmd = trimmed;
+        const cmd = transformCommand(trimmed);
+        
+        console.log(`[CMD] Executing: ${cmd}`);
         
         let proc;
         const shell = cmd.startsWith('sudo') || cmd.includes('|') || cmd.includes('&&') || cmd.includes('||');
@@ -87,27 +102,42 @@ io.on('connection', (socket) => {
             proc = spawn(shell ? '/bin/sh' : '/bin/bash', ['-c', cmd], {
                 cwd: process.env.HOME || '/root',
                 env: process.env,
-                maxBuffer: 1024 * 1024 * 10,
-                timeout: 30000
+                maxBuffer: 1024 * 1024 * 10
             });
         } catch (e) {
+            console.error('[CMD] Spawn error:', e.message);
             socket.emit('output', { error: `命令执行失败: ${e.message}` });
             return;
         }
         
+        const timeout = setTimeout(() => {
+            console.warn(`[CMD] Timeout: ${cmd}`);
+            if (proc) {
+                proc.kill('SIGKILL');
+            }
+        }, 30000);
+        
         proc.stdout.on('data', (data) => {
-            socket.emit('output', { stdout: data.toString() });
+            const output = data.toString();
+            console.log(`[CMD] stdout: ${output.substring(0, 100)}...`);
+            socket.emit('output', { stdout: output });
         });
         
         proc.stderr.on('data', (data) => {
-            socket.emit('output', { stderr: data.toString() });
+            const output = data.toString();
+            console.log(`[CMD] stderr: ${output.substring(0, 100)}...`);
+            socket.emit('output', { stderr: output });
         });
         
         proc.on('close', (code) => {
-            socket.emit('output', { done: true, exitCode: code, prompt: '\n$ ' });
+            clearTimeout(timeout);
+            console.log(`[CMD] Exit code: ${code}`);
+            socket.emit('output', { done: true, exitCode: code });
         });
         
         proc.on('error', (err) => {
+            clearTimeout(timeout);
+            console.error('[CMD] Error:', err.message);
             socket.emit('output', { error: `执行错误: ${err.message}` });
         });
     });

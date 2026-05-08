@@ -3,165 +3,305 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>服务器管理面板</title>
+    <title>服务器面板</title>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <div class="app">
-        <nav class="sidebar">
+    <div class="drawer-overlay" id="drawerOverlay"></div>
+    
+    <nav class="drawer" id="drawer">
+        <div class="drawer-header">
             <div class="logo">
-                <div class="logo-icon">🖥️</div>
-                <span class="logo-text">ServerPanel</span>
+                <div class="logo-icon"></div>
+                <span class="logo-text">服务器面板</span>
             </div>
-            <ul class="nav-list">
-                <li><a href="#" class="nav-item active" data-page="dashboard">📊 仪表盘</a></li>
-                <li><a href="#" class="nav-item" data-page="terminal">💻 终端</a></li>
-                <li><a href="#" class="nav-item" data-page="processes">⚙️ 进程</a></li>
-                <li><a href="#" class="nav-item" data-page="network">🌐 网络</a></li>
-                <li><a href="#" class="nav-item" data-page="services">📦 服务</a></li>
-                <li><a href="#" class="nav-item" data-page="alerts">🔔 告警</a></li>
-            </ul>
-        </nav>
+            <button class="drawer-close" id="drawerClose">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
         
-        <main class="main">
-            <header class="header">
-                <h1 class="page-title">仪表盘</h1>
-                <div class="time" id="currentTime">--:--:--</div>
-            </header>
-            
-            <div class="content">
-                <div id="dashboard" class="page active">
-                    <div class="cards">
-                        <div class="card">
-                            <div class="card-header">
-                                <span class="card-icon">⚡</span>
-                                <h3>CPU</h3>
+        <div class="drawer-user">
+            <div class="user-avatar"></div>
+            <div class="user-info">
+                <span class="user-name">超级用户</span>
+                <span class="user-status online">在线</span>
+            </div>
+        </div>
+        
+        <ul class="drawer-menu">
+            <li><a href="#" class="menu-item active" data-page="dashboard">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                仪表盘
+            </a></li>
+            <li><a href="#" class="menu-item" data-page="processes">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+                进程
+            </a></li>
+            <li><a href="#" class="menu-item" data-page="network">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                网络
+            </a></li>
+            <li><a href="#" class="menu-item" data-page="services">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                服务
+            </a></li>
+            <li><a href="#" class="menu-item" data-page="alerts">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                告警
+                <span class="badge" id="alertBadge" style="display:none">0</span>
+            </a></li>
+            <li><a href="#" class="menu-item" data-page="activity">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+                活动
+            </a></li>
+            <li><a href="#" class="menu-item" data-page="quickactions">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                快捷操作
+            </a></li>
+        </ul>
+        
+        <div class="drawer-footer">
+            <div class="server-info-mini">
+                <span class="server-name" id="serverName">加载中...</span>
+                <span class="server-uptime" id="serverUptime">运行时间: --</span>
+            </div>
+        </div>
+    </nav>
+    
+    <main class="main-content">
+        <header class="top-bar">
+            <button class="menu-toggle" id="menuToggle">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+            </button>
+            <h1 class="page-title" id="pageTitle">仪表盘</h1>
+            <div class="header-right">
+                <div class="quick-stats">
+                    <div class="stat-mini cpu-mini" id="cpuMini">
+                        <span class="stat-label">CPU</span>
+                        <span class="stat-value">0%</span>
+                    </div>
+                    <div class="stat-mini mem-mini" id="memMini">
+                        <span class="stat-label">内存</span>
+                        <span class="stat-value">0%</span>
+                    </div>
+                </div>
+                <div class="time-display" id="currentTime">--:--:--</div>
+            </div>
+        </header>
+        
+        <div class="content-area">
+            <div id="dashboard" class="page active">
+                <div class="dashboard-grid">
+                    <div class="stat-cards">
+                        <div class="stat-card cpu-card">
+                            <div class="stat-header">
+                                <div class="stat-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>
+                                </div>
+                                <span class="stat-name">CPU</span>
                             </div>
-                            <div class="card-body">
-                                <div class="circular-progress" data-percent="0">
-                                    <svg viewBox="0 0 100 100"><circle class="bg" cx="50" cy="50" r="45"/><circle class="progress" cx="50" cy="50" r="45"/></svg>
-                                    <span class="value">0%</span>
-                                </div>
-                                <div class="info">
-                                    <p><strong>型号:</strong> <span id="cpuModel">-</span></p>
-                                    <p><strong>核心:</strong> <span id="cpuCores">-</span></p>
-                                    <p><strong>频率:</strong> <span id="cpuSpeed">-</span></p>
-                                </div>
+                            <div class="circular-gauge" data-value="0">
+                                <svg viewBox="0 0 100 100"><circle class="gauge-bg" cx="50" cy="50" r="42"/><circle class="gauge-fill cpu" cx="50" cy="50" r="42"/></svg>
+                                <div class="gauge-value">0%</div>
+                            </div>
+                            <div class="stat-detail">
+                                <span id="cpuModel">-</span>
+                                <span id="cpuCores">-</span>
                             </div>
                         </div>
                         
-                        <div class="card">
-                            <div class="card-header">
-                                <span class="card-icon">🧠</span>
-                                <h3>内存</h3>
+                        <div class="stat-card mem-card">
+                            <div class="stat-header">
+                                <div class="stat-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 19v-3"/><path d="M10 19v-3"/><path d="M14 19v-3"/><path d="M18 19v-3"/><path d="M2 11h20"/><rect x="2" y="4" width="20" height="7" rx="1"/></svg>
+                                </div>
+                                <span class="stat-name">内存</span>
                             </div>
-                            <div class="card-body">
-                                <div class="circular-progress" data-percent="0">
-                                    <svg viewBox="0 0 100 100"><circle class="bg" cx="50" cy="50" r="45"/><circle class="progress memory" cx="50" cy="50" r="45"/></svg>
-                                    <span class="value">0%</span>
-                                </div>
-                                <div class="info">
-                                    <p><strong>已用:</strong> <span id="memUsed">-</span></p>
-                                    <p><strong>可用:</strong> <span id="memFree">-</span></p>
-                                    <p><strong>总计:</strong> <span id="memTotal">-</span></p>
-                                </div>
+                            <div class="circular-gauge" data-value="0">
+                                <svg viewBox="0 0 100 100"><circle class="gauge-bg" cx="50" cy="50" r="42"/><circle class="gauge-fill memory" cx="50" cy="50" r="42"/></svg>
+                                <div class="gauge-value">0%</div>
+                            </div>
+                            <div class="stat-detail">
+                                <span id="memUsed">-</span>
+                                <span id="memTotal">-</span>
                             </div>
                         </div>
                         
-                        <div class="card">
-                            <div class="card-header">
-                                <span class="card-icon">💾</span>
-                                <h3>磁盘</h3>
-                            </div>
-                            <div class="card-body">
-                                <div class="circular-progress" data-percent="0">
-                                    <svg viewBox="0 0 100 100"><circle class="bg" cx="50" cy="50" r="45"/><circle class="progress disk" cx="50" cy="50" r="45"/></svg>
-                                    <span class="value">0%</span>
+                        <div class="stat-card disk-card">
+                            <div class="stat-header">
+                                <div class="stat-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
                                 </div>
-                                <div class="info">
-                                    <p><strong>已用:</strong> <span id="diskUsed">-</span></p>
-                                    <p><strong>可用:</strong> <span id="diskFree">-</span></p>
-                                    <p><strong>总计:</strong> <span id="diskTotal">-</span></p>
-                                </div>
+                                <span class="stat-name">磁盘</span>
                             </div>
-                        </div>
-                        
-                        <div class="card system-info">
-                            <div class="card-header">
-                                <span class="card-icon">🖧</span>
-                                <h3>系统信息</h3>
+                            <div class="circular-gauge" data-value="0">
+                                <svg viewBox="0 0 100 100"><circle class="gauge-bg" cx="50" cy="50" r="42"/><circle class="gauge-fill disk" cx="50" cy="50" r="42"/></svg>
+                                <div class="gauge-value">0%</div>
                             </div>
-                            <div class="card-body">
-                                <p><strong>主机名:</strong> <span id="hostname">-</span></p>
-                                <p><strong>系统:</strong> <span id="platform">-</span></p>
-                                <p><strong>运行时间:</strong> <span id="uptime">-</span></p>
-                                <p><strong>负载:</strong> <span id="loadavg">-</span></p>
+                            <div class="stat-detail">
+                                <span id="diskUsed">-</span>
+                                <span id="diskFree">-</span>
                             </div>
                         </div>
                     </div>
                     
-                    <div class="chart-container">
-                        <h3>实时监控</h3>
-                        <canvas id="chart"></canvas>
+                    <div class="system-overview">
+                        <div class="overview-card">
+                            <h3>系统信息</h3>
+                            <div class="info-grid">
+                                <div class="info-item"><span class="label">主机名</span><span class="value" id="hostname">-</span></div>
+                                <div class="info-item"><span class="label">操作系统</span><span class="value" id="platform">-</span></div>
+                                <div class="info-item"><span class="label">运行时间</span><span class="value" id="uptime">-</span></div>
+                                <div class="info-item"><span class="label">平均负载</span><span class="value" id="loadavg">-</span></div>
+                            </div>
+                        </div>
                     </div>
-                </div>
-                
-                <div id="terminal" class="page">
-                    <div class="terminal">
-                        <div class="terminal-output" id="terminalOutput"></div>
-                        <div class="terminal-input">
-                            <span>$</span>
-                            <input type="text" id="cmdInput" placeholder="输入命令...">
+                    
+                    <div class="chart-section">
+                        <div class="chart-card">
+                            <div class="chart-header">
+                                <h3>实时监控</h3>
+                                <div class="chart-legend">
+                                    <span class="legend-item cpu-legend">CPU</span>
+                                    <span class="legend-item mem-legend">内存</span>
+                                </div>
+                            </div>
+                            <canvas id="mainChart"></canvas>
                         </div>
                     </div>
                 </div>
-                
-                <div id="processes" class="page">
-                    <div class="toolbar">
-                        <input type="text" id="processSearch" placeholder="搜索进程...">
-                        <button onclick="loadProcesses()">🔄 刷新</button>
-                    </div>
+            </div>
+            
+            <div id="processes" class="page">
+                <div class="page-toolbar">
+                    <input type="text" id="processSearch" placeholder="搜索进程...">
+                    <button class="btn-refresh" onclick="loadProcesses()">刷新</button>
+                </div>
+                <div class="table-wrapper">
                     <table class="data-table">
-                        <thead><tr><th>PID</th><th>用户</th><th>CPU%</th><th>内存%</th><th>命令</th><th>操作</th></tr></thead>
+                        <thead><tr><th>进程ID</th><th>用户</th><th>CPU%</th><th>内存%</th><th>命令</th><th>操作</th></tr></thead>
                         <tbody id="processTable"></tbody>
                     </table>
                 </div>
-                
-                <div id="network" class="page">
-                    <div class="toolbar">
-                        <button onclick="loadNetwork()">🔄 刷新</button>
-                    </div>
+            </div>
+            
+            <div id="network" class="page">
+                <div class="page-toolbar">
+                    <button class="btn-refresh" onclick="loadNetwork()">刷新</button>
+                </div>
+                <div class="table-wrapper">
                     <table class="data-table">
                         <thead><tr><th>协议</th><th>地址</th><th>端口</th><th>状态</th></tr></thead>
                         <tbody id="networkTable"></tbody>
                     </table>
                 </div>
-                
-                <div id="services" class="page">
-                    <div class="toolbar">
-                        <button onclick="loadServices()">🔄 刷新</button>
-                    </div>
-                    <div class="services-grid" id="servicesGrid"></div>
+            </div>
+            
+            <div id="services" class="page">
+                <div class="page-toolbar">
+                    <button class="btn-refresh" onclick="loadServices()">刷新</button>
                 </div>
-                
-                <div id="alerts" class="page">
-                    <div class="alerts-summary">
-                        <div class="summary-card warning">⚠️ 警告: <span id="warningCount">0</span></div>
-                        <div class="summary-card critical">🚨 严重: <span id="criticalCount">0</span></div>
+                <div class="services-grid" id="servicesGrid"></div>
+            </div>
+            
+            <div id="alerts" class="page">
+                <div class="alerts-dashboard">
+                    <div class="alert-stats">
+                        <div class="alert-stat warning">
+                            <span class="stat-num" id="warningCount">0</span>
+                            <span class="stat-label">警告</span>
+                        </div>
+                        <div class="alert-stat critical">
+                            <span class="stat-num" id="criticalCount">0</span>
+                            <span class="stat-label">严重</span>
+                        </div>
+                        <div class="alert-stat resolved">
+                            <span class="stat-num" id="resolvedCount">0</span>
+                            <span class="stat-label">已恢复</span>
+                        </div>
                     </div>
+                    
                     <div class="alerts-section">
-                        <h3>当前告警</h3>
-                        <div id="activeAlerts"></div>
+                        <h3>活动告警</h3>
+                        <div id="activeAlerts" class="alerts-list"></div>
                     </div>
+                    
                     <div class="alerts-section">
                         <h3>告警规则</h3>
                         <div class="rules-grid" id="rulesGrid"></div>
                     </div>
                 </div>
             </div>
-        </main>
-    </div>
+            
+            <div id="activity" class="page">
+                <div class="activity-dashboard">
+                    <div class="activity-header">
+                        <h3>活动热力图</h3>
+                        <span class="activity-subtitle">服务器近7天活动</span>
+                    </div>
+                    <div class="heatmap-container">
+                        <div class="heatmap" id="heatmap"></div>
+                        <div class="heatmap-legend">
+                            <span>少</span>
+                            <div class="legend-squares">
+                                <div class="square level-0"></div>
+                                <div class="square level-1"></div>
+                                <div class="square level-2"></div>
+                                <div class="square level-3"></div>
+                                <div class="square level-4"></div>
+                            </div>
+                            <span>多</span>
+                        </div>
+                    </div>
+                    
+                    <div class="stats-summary">
+                        <div class="summary-stat">
+                            <span class="stat-num" id="totalEvents">0</span>
+                            <span class="stat-label">总事件数</span>
+                        </div>
+                        <div class="summary-stat">
+                            <span class="stat-num" id="avgLoad">0</span>
+                            <span class="stat-label">平均负载</span>
+                        </div>
+                        <div class="summary-stat">
+                            <span class="stat-num" id="peakHour">-</span>
+                            <span class="stat-label">峰值时段</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="quickactions" class="page">
+                <div class="quickactions-dashboard">
+                    <h3>快捷操作</h3>
+                    <div class="actions-grid">
+                        <button class="action-btn" onclick="quickAction('df')">
+                            <div class="action-icon">DF</div>
+                            <span>磁盘使用</span>
+                        </button>
+                        <button class="action-btn" onclick="quickAction('free')">
+                            <div class="action-icon">FREE</div>
+                            <span>内存信息</span>
+                        </button>
+                        <button class="action-btn" onclick="quickAction('who')">
+                            <div class="action-icon">WHO</div>
+                            <span>在线用户</span>
+                        </button>
+                        <button class="action-btn" onclick="quickAction('last')">
+                            <div class="action-icon">LAST</div>
+                            <span>登录历史</span>
+                        </button>
+                    </div>
+                    
+                    <div class="action-output">
+                        <h3>输出</h3>
+                        <pre id="actionOutput">选择一个操作执行...</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
     
     <div class="toast" id="toast"></div>
     
