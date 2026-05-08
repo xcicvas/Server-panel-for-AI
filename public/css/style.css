@@ -342,7 +342,7 @@ body {
 .stat-detail { display: flex; flex-direction: column; gap: 4px; font-size: 0.85rem; color: var(--text2); }
 .stat-detail span { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-.system-overview { grid-column: span 1; }
+.system-overview { grid-column: span 1; display: flex; flex-direction: column; gap: 20px; }
 
 .overview-card {
     background: var(--bg2);
@@ -359,6 +359,52 @@ body {
 .info-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; background: var(--bg3); border-radius: 12px; }
 .info-item .label { color: var(--text2); font-size: 0.9rem; }
 .info-item .value { font-weight: 600; color: var(--accent); font-size: 0.9rem; }
+
+.mood-card {
+    background: linear-gradient(135deg, var(--bg2), #fef9f3);
+    border: 1px solid var(--bg3);
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+}
+
+.mood-card h3 { margin-bottom: 16px; font-size: 1rem; color: var(--text); }
+
+.mood-display { text-align: center; padding: 16px 0; }
+
+.mood-emoji { font-size: 3.5rem; margin-bottom: 8px; animation: bounce 2s ease-in-out infinite; }
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+}
+
+.mood-text { font-size: 1.2rem; font-weight: 600; color: var(--accent); margin-bottom: 8px; }
+.mood-reason { font-size: 0.85rem; color: var(--text2); min-height: 20px; }
+
+.achievements-section { margin-top: 24px; }
+
+.achievements-section h3 { margin-bottom: 16px; font-size: 1rem; color: var(--text); }
+
+.achievements-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
+
+.achievement-badge {
+    background: var(--bg2);
+    border: 2px solid var(--bg3);
+    border-radius: 16px;
+    padding: 16px 12px;
+    text-align: center;
+    transition: all 0.3s;
+}
+
+.achievement-badge.unlocked { border-color: var(--accent); background: linear-gradient(135deg, var(--bg2), #f5f3ff); }
+.achievement-badge.unlocked .achievement-icon { filter: none; }
+
+.achievement-icon { font-size: 2rem; margin-bottom: 8px; filter: grayscale(100%); opacity: 0.4; }
+.achievement-badge.unlocked .achievement-icon { filter: none; opacity: 1; }
+
+.achievement-name { font-size: 0.8rem; font-weight: 600; color: var(--text); }
+.achievement-desc { font-size: 0.7rem; color: var(--text2); margin-top: 4px; }
 
 .chart-section { grid-column: span 3; }
 

@@ -128,9 +128,44 @@ async function loadDashboard() {
         recordActivity(cpu.usage);
         updateChart();
         checkAlerts();
+        updateMood(cpu.usage, mem.usagePercent, disk.usagePercent, info.uptime);
     } catch (error) {
         console.error('加载失败:', error);
     }
+}
+
+const moods = [
+    { emoji: 'happy', text: '开心', condition: (c, m, d, u) => c < 30 && m < 50 },
+    { emoji: 'relaxed', text: '悠闲', condition: (c, m, d, u) => c < 50 && m < 70 },
+    { emoji: 'thinking', text: '思考中', condition: (c, m, d, u) => c >= 50 && c < 70 },
+    { emoji: 'working', text: '努力工作', condition: (c, m, d, u) => c >= 70 && c < 85 },
+    { emoji: 'stressed', text: '压力山大', condition: (c, m, d, u) => c >= 85 || m >= 90 },
+    { emoji: 'sleeping', text: '休眠中', condition: (c, m, d, u) => u > 86400 && c < 10 }
+];
+
+const moodReasons = {
+    '开心': '负载很低，一切正常',
+    '悠闲': '资源充足，运行良好',
+    '思考中': '正在处理一些任务',
+    '努力工作': '负载较高工作中',
+    '压力山大': '资源使用率过高',
+    '休眠中': '长时间运行但负载极低'
+};
+
+function updateMood(cpu, mem, disk, uptime) {
+    const mood = moods.find(m => m.condition(cpu, mem, disk, uptime)) || moods[1];
+    const emojiMap = {
+        '开心': '(^o^)',
+        '悠闲': '(^_^)',
+        '思考中': '(-_-)',
+        '努力工作': '(>_<)',
+        '压力山大': '(@_@)',
+        '休眠中': '(-_-) zzz'
+    };
+    
+    document.getElementById('moodEmoji').textContent = emojiMap[mood.text] || '(?_?)';
+    document.getElementById('moodText').textContent = mood.text;
+    document.getElementById('moodReason').textContent = moodReasons[mood.text] || '状态正常';
 }
 
 function updateGauge(index, percent) {
@@ -223,6 +258,57 @@ function initActivity() {
     document.getElementById('totalEvents').textContent = totalEvents;
     document.getElementById('avgLoad').textContent = avgLoad + '%';
     document.getElementById('peakHour').textContent = '14:00';
+    
+    initAchievements();
+}
+
+const achievements = [
+    { id: 'long_run', icon: 'server', name: '长期运行', desc: '服务器运行超过24小时', check: (data) => data.uptime > 86400 },
+    { id: 'low_load', icon: 'leaf', name: '轻量运行', desc: 'CPU 负载低于 20%', check: (data) => data.cpu < 20 },
+    { id: 'no_alerts', icon: 'shield', name: '安全无虞', desc: '连续1小时无告警', check: () => true },
+    { id: 'mem_efficient', icon: 'ram', name: '内存高效', desc: '内存使用率低于 50%', check: (data) => data.mem < 50 },
+    { id: 'disk_healthy', icon: 'disk', name: '磁盘健康', desc: '磁盘使用率低于 70%', check: (data) => data.disk < 70 },
+    { id: 'multi_core', icon: 'cpu', name: '多核战士', desc: '服务器拥有 4 核以上 CPU', check: (data) => data.cores >= 4 },
+    { id: 'first_boot', icon: 'rocket', name: '初次启动', desc: '面板首次运行', check: () => true },
+    { id: 'active_monitor', icon: 'eye', name: '活跃监控', desc: '持续监控超过 10 分钟', check: () => activityData.length > 20 }
+];
+
+const achievementIcons = {
+    server: '🖥️',
+    leaf: '🍃',
+    shield: '🛡️',
+    ram: '💾',
+    disk: '💿',
+    cpu: '⚙️',
+    rocket: '🚀',
+    eye: '👁️'
+};
+
+let unlockedAchievements = new Set();
+
+function initAchievements() {
+    const grid = document.getElementById('achievementsGrid');
+    if (!grid) return;
+    
+    const data = {
+        uptime: currentSystemData?.cpu ? 3600 : 0,
+        cpu: currentSystemData?.cpu?.usage || 0,
+        mem: currentSystemData?.memory?.usagePercent || 0,
+        disk: currentSystemData?.disk?.usagePercent || 0,
+        cores: currentSystemData?.cpu?.cores || 1
+    };
+    
+    grid.innerHTML = achievements.map(a => {
+        const unlocked = a.check(data);
+        if (unlocked) unlockedAchievements.add(a.id);
+        return `
+            <div class="achievement-badge ${unlocked ? 'unlocked' : ''}">
+                <div class="achievement-icon">${achievementIcons[a.icon]}</div>
+                <div class="achievement-name">${a.name}</div>
+                <div class="achievement-desc">${a.desc}</div>
+            </div>
+        `;
+    }).join('');
 }
 
 function initQuickActions() {

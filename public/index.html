@@ -156,6 +156,14 @@
                                 <div class="info-item"><span class="label">平均负载</span><span class="value" id="loadavg">-</span></div>
                             </div>
                         </div>
+                        <div class="mood-card">
+                            <h3>服务器心情</h3>
+                            <div class="mood-display">
+                                <div class="mood-emoji" id="moodEmoji">-</div>
+                                <div class="mood-text" id="moodText">检测中...</div>
+                                <div class="mood-reason" id="moodReason"></div>
+                            </div>
+                        </div>
                     </div>
                     
                     <div class="chart-section">
@@ -268,6 +276,11 @@
                             <span class="stat-num" id="peakHour">-</span>
                             <span class="stat-label">峰值时段</span>
                         </div>
+                    </div>
+                    
+                    <div class="achievements-section">
+                        <h3>服务器成就</h3>
+                        <div class="achievements-grid" id="achievementsGrid"></div>
                     </div>
                 </div>
             </div>
