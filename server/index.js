@@ -2,6 +2,7 @@ const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
 const path = require('path');
+const session = require('express-session');
 
 const systemRoutes = require('./routes/system');
 const processRoutes = require('./routes/processes');
@@ -29,9 +30,73 @@ const io = new Server(server, {
 });
 
 const PORT = process.env.PORT || 3000;
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin123';
+const SESSION_SECRET = process.env.SESSION_SECRET || 'server-panel-secret-key-change-in-production';
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '../public')));
+
+app.use(session({
+    secret: SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        maxAge: 24 * 60 * 60 * 1000,
+        httpOnly: true
+    }
+}));
+
+const authMiddleware = (req, res, next) => {
+    const path = req.path;
+    if (path === '/auth/login' || path === '/auth/status' || path === '/auth/logout') {
+        return next();
+    }
+    if (req.session && req.session.authenticated) {
+        return next();
+    }
+    res.status(401).json({ error: '未登录', code: 'UNAUTHORIZED' });
+};
+
+app.use('/api', authMiddleware);
+
+app.post('/api/auth/login', (req, res) => {
+    const { password } = req.body;
+    if (!password) {
+        return res.status(400).json({ error: '请输入密码' });
+    }
+    if (password === ADMIN_PASSWORD) {
+        req.session.authenticated = true;
+        req.session.loginTime = new Date().toISOString();
+        return res.json({ success: true, message: '登录成功' });
+    }
+    res.status(401).json({ error: '密码错误' });
+});
+
+app.post('/api/auth/logout', (req, res) => {
+    req.session.destroy();
+    res.json({ success: true, message: '已退出登录' });
+});
+
+app.get('/api/auth/status', (req, res) => {
+    res.json({
+        authenticated: req.session.authenticated || false,
+        loginTime: req.session.loginTime || null
+    });
+});
+
+app.post('/api/auth/change-password', (req, res) => {
+    const { oldPassword, newPassword } = req.body;
+    if (!req.session.authenticated) {
+        return res.status(401).json({ error: '未登录' });
+    }
+    if (oldPassword !== ADMIN_PASSWORD) {
+        return res.status(403).json({ error: '原密码错误' });
+    }
+    if (!newPassword || newPassword.length < 6) {
+        return res.status(400).json({ error: '新密码长度至少6位' });
+    }
+    res.json({ success: true, message: '密码修改成功（本次会话有效，重启后需使用新密码）' });
+});
 
 app.use('/api/system', systemRoutes);
 app.use('/api/processes', processRoutes);
@@ -136,25 +201,25 @@ io.on('connection', (socket) => {
                 proc.kill('SIGKILL');
             }
         }, 30000);
-        
+
         proc.stdout.on('data', (data) => {
             const output = data.toString();
             console.log(`[CMD] stdout: ${output.substring(0, 100)}...`);
             socket.emit('output', { stdout: output });
         });
-        
+
         proc.stderr.on('data', (data) => {
             const output = data.toString();
             console.log(`[CMD] stderr: ${output.substring(0, 100)}...`);
             socket.emit('output', { stderr: output });
         });
-        
+
         proc.on('close', (code) => {
             clearTimeout(timeout);
             console.log(`[CMD] Exit code: ${code}`);
             socket.emit('output', { done: true, exitCode: code });
         });
-        
+
         proc.on('error', (err) => {
             clearTimeout(timeout);
             console.error('[CMD] Error:', err.message);
@@ -173,6 +238,9 @@ server.listen(PORT, () => {
 ║     🖥️  服务器管理面板已启动                           ║
 ║                                                      ║
 ║     📍 访问地址: http://localhost:${PORT}               ║
+║                                                      ║
+║     🔐 默认密码: ${ADMIN_PASSWORD}                          ║
+║     💡 环境变量 ADMIN_PASSWORD 可修改默认密码           ║
 ║                                                      ║
 ║     ⚡ 按 Ctrl+C 停止服务器                           ║
 ║                                                      ║

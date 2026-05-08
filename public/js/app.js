@@ -4,6 +4,91 @@ let cpuHistory = [];
 let memHistory = [];
 let currentSystemData = {};
 let activityData = [];
+let isAuthenticated = false;
+
+async function checkAuthStatus() {
+    try {
+        const res = await fetch('/api/auth/status');
+        const data = await res.json();
+        isAuthenticated = data.authenticated;
+        if (isAuthenticated) {
+            hideLogin();
+            initApp();
+        } else {
+            showLogin();
+        }
+    } catch (error) {
+        showLogin();
+    }
+}
+
+function showLogin() {
+    document.getElementById('loginOverlay').classList.remove('hidden');
+    document.querySelectorAll('.page, .drawer, nav, .health-score-banner').forEach(el => el.classList.add('hidden'));
+    document.getElementById('loginPassword').focus();
+}
+
+function hideLogin() {
+    document.getElementById('loginOverlay').classList.add('hidden');
+    document.querySelectorAll('.page, .drawer, nav, .health-score-banner').forEach(el => el.classList.remove('hidden'));
+}
+
+document.getElementById('loginForm')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const password = document.getElementById('loginPassword').value;
+    const errorEl = document.getElementById('loginError');
+    
+    try {
+        const res = await fetch('/api/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ password })
+        });
+        
+        const data = await res.json();
+        
+        if (res.ok && data.success) {
+            isAuthenticated = true;
+            hideLogin();
+            initApp();
+        } else {
+            errorEl.textContent = data.error || '登录失败';
+        }
+    } catch (error) {
+        errorEl.textContent = '网络错误，请重试';
+    }
+});
+
+async function logout() {
+    try {
+        await fetch('/api/auth/logout', { method: 'POST' });
+        isAuthenticated = false;
+        showLogin();
+    } catch (error) {
+        console.error('Logout failed:', error);
+    }
+}
+
+function initApp() {
+    updateTime();
+    setInterval(updateTime, 1000);
+    loadDashboard();
+    setInterval(loadDashboard, 3000);
+    updateHealthBanner();
+    checkNightMode();
+    setInterval(checkNightMode, 60000);
+    document.getElementById('processSearch')?.addEventListener('input', loadProcesses);
+    
+    const originalLoadDashboard = loadDashboard;
+    loadDashboard = async function() {
+        await originalLoadDashboard();
+        const cpu = currentSystemData?.cpu?.usage || 0;
+        const mem = currentSystemData?.memory?.usagePercent || 0;
+        const disk = currentSystemData?.disk?.usagePercent || 0;
+        checkAndShowDanmaku(cpu, mem, disk);
+        checkIdleServer();
+    };
+}
 
 function formatBytes(bytes) {
     if (!bytes) return '0 B';
@@ -1342,24 +1427,5 @@ function checkIdleServer() {
 }
 
 applyTheme(currentTheme);
-checkNightMode();
-setInterval(checkNightMode, 60000);
-
-document.getElementById('processSearch')?.addEventListener('input', loadProcesses);
-
-updateTime();
-setInterval(updateTime, 1000);
-loadDashboard();
-setInterval(loadDashboard, 3000);
-updateHealthBanner();
-
-const originalLoadDashboard = loadDashboard;
-loadDashboard = async function() {
-    await originalLoadDashboard();
-    const cpu = currentSystemData?.cpu?.usage || 0;
-    const mem = currentSystemData?.memory?.usagePercent || 0;
-    const disk = currentSystemData?.disk?.usagePercent || 0;
-    checkAndShowDanmaku(cpu, mem, disk);
-    checkIdleServer();
-};
+checkAuthStatus();
 
