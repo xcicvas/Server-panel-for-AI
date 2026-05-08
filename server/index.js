@@ -8,6 +8,16 @@ const processRoutes = require('./routes/processes');
 const networkRoutes = require('./routes/network');
 const serviceRoutes = require('./routes/services');
 const alertRoutes = require('./routes/alerts');
+const cronRoutes = require('./routes/cron');
+const logsRoutes = require('./routes/logs');
+const timelineRoutes = require('./routes/timeline');
+const dockerRoutes = require('./routes/docker');
+const filesRoutes = require('./routes/files');
+const cleanupRoutes = require('./routes/cleanup');
+const connectionsRoutes = require('./routes/connections');
+const updatesRoutes = require('./routes/updates');
+const configsRoutes = require('./routes/configs');
+const benchmarkRoutes = require('./routes/benchmark');
 
 const app = express();
 const server = http.createServer(app);
@@ -28,6 +38,16 @@ app.use('/api/processes', processRoutes);
 app.use('/api/network', networkRoutes);
 app.use('/api/services', serviceRoutes);
 app.use('/api/alerts', alertRoutes);
+app.use('/api/cron', cronRoutes);
+app.use('/api/logs', logsRoutes);
+app.use('/api/timeline', timelineRoutes);
+app.use('/api/docker', dockerRoutes);
+app.use('/api/files', filesRoutes);
+app.use('/api/cleanup', cleanupRoutes);
+app.use('/api/connections', connectionsRoutes);
+app.use('/api/updates', updatesRoutes);
+app.use('/api/configs', configsRoutes);
+app.use('/api/benchmark', benchmarkRoutes);
 
 const ALLOWED_COMMANDS = [
     'ls', 'll', 'la', 'pwd', 'cd', 'cat', 'grep', 'find', 'which',
