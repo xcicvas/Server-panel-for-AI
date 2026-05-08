@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>服务器管理面板</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="app">
+        <nav class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">🖥️</div>
+                <span class="logo-text">ServerPanel</span>
+            </div>
+            <ul class="nav-list">
+                <li><a href="#" class="nav-item active" data-page="dashboard">📊 仪表盘</a></li>
+                <li><a href="#" class="nav-item" data-page="terminal">💻 终端</a></li>
+                <li><a href="#" class="nav-item" data-page="processes">⚙️ 进程</a></li>
+                <li><a href="#" class="nav-item" data-page="network">🌐 网络</a></li>
+                <li><a href="#" class="nav-item" data-page="services">📦 服务</a></li>
+                <li><a href="#" class="nav-item" data-page="alerts">🔔 告警</a></li>
+            </ul>
+        </nav>
+        
+        <main class="main">
+            <header class="header">
+                <h1 class="page-title">仪表盘</h1>
+                <div class="time" id="currentTime">--:--:--</div>
+            </header>
+            
+            <div class="content">
+                <div id="dashboard" class="page active">
+                    <div class="cards">
+                        <div class="card">
+                            <div class="card-header">
+                                <span class="card-icon">⚡</span>
+                                <h3>CPU</h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="circular-progress" data-percent="0">
+                                    <svg viewBox="0 0 100 100"><circle class="bg" cx="50" cy="50" r="45"/><circle class="progress" cx="50" cy="50" r="45"/></svg>
+                                    <span class="value">0%</span>
+                                </div>
+                                <div class="info">
+                                    <p><strong>型号:</strong> <span id="cpuModel">-</span></p>
+                                    <p><strong>核心:</strong> <span id="cpuCores">-</span></p>
+                                    <p><strong>频率:</strong> <span id="cpuSpeed">-</span></p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card-header">
+                                <span class="card-icon">🧠</span>
+                                <h3>内存</h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="circular-progress" data-percent="0">
+                                    <svg viewBox="0 0 100 100"><circle class="bg" cx="50" cy="50" r="45"/><circle class="progress memory" cx="50" cy="50" r="45"/></svg>
+                                    <span class="value">0%</span>
+                                </div>
+                                <div class="info">
+                                    <p><strong>已用:</strong> <span id="memUsed">-</span></p>
+                                    <p><strong>可用:</strong> <span id="memFree">-</span></p>
+                                    <p><strong>总计:</strong> <span id="memTotal">-</span></p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card-header">
+                                <span class="card-icon">💾</span>
+                                <h3>磁盘</h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="circular-progress" data-percent="0">
+                                    <svg viewBox="0 0 100 100"><circle class="bg" cx="50" cy="50" r="45"/><circle class="progress disk" cx="50" cy="50" r="45"/></svg>
+                                    <span class="value">0%</span>
+                                </div>
+                                <div class="info">
+                                    <p><strong>已用:</strong> <span id="diskUsed">-</span></p>
+                                    <p><strong>可用:</strong> <span id="diskFree">-</span></p>
+                                    <p><strong>总计:</strong> <span id="diskTotal">-</span></p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card system-info">
+                            <div class="card-header">
+                                <span class="card-icon">🖧</span>
+                                <h3>系统信息</h3>
+                            </div>
+                            <div class="card-body">
+                                <p><strong>主机名:</strong> <span id="hostname">-</span></p>
+                                <p><strong>系统:</strong> <span id="platform">-</span></p>
+                                <p><strong>运行时间:</strong> <span id="uptime">-</span></p>
+                                <p><strong>负载:</strong> <span id="loadavg">-</span></p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-container">
+                        <h3>实时监控</h3>
+                        <canvas id="chart"></canvas>
+                    </div>
+                </div>
+                
+                <div id="terminal" class="page">
+                    <div class="terminal">
+                        <div class="terminal-output" id="terminalOutput"></div>
+                        <div class="terminal-input">
+                            <span>$</span>
+                            <input type="text" id="cmdInput" placeholder="输入命令...">
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="processes" class="page">
+                    <div class="toolbar">
+                        <input type="text" id="processSearch" placeholder="搜索进程...">
+                        <button onclick="loadProcesses()">🔄 刷新</button>
+                    </div>
+                    <table class="data-table">
+                        <thead><tr><th>PID</th><th>用户</th><th>CPU%</th><th>内存%</th><th>命令</th><th>操作</th></tr></thead>
+                        <tbody id="processTable"></tbody>
+                    </table>
+                </div>
+                
+                <div id="network" class="page">
+                    <div class="toolbar">
+                        <button onclick="loadNetwork()">🔄 刷新</button>
+                    </div>
+                    <table class="data-table">
+                        <thead><tr><th>协议</th><th>地址</th><th>端口</th><th>状态</th></tr></thead>
+                        <tbody id="networkTable"></tbody>
+                    </table>
+                </div>
+                
+                <div id="services" class="page">
+                    <div class="toolbar">
+                        <button onclick="loadServices()">🔄 刷新</button>
+                    </div>
+                    <div class="services-grid" id="servicesGrid"></div>
+                </div>
+                
+                <div id="alerts" class="page">
+                    <div class="alerts-summary">
+                        <div class="summary-card warning">⚠️ 警告: <span id="warningCount">0</span></div>
+                        <div class="summary-card critical">🚨 严重: <span id="criticalCount">0</span></div>
+                    </div>
+                    <div class="alerts-section">
+                        <h3>当前告警</h3>
+                        <div id="activeAlerts"></div>
+                    </div>
+                    <div class="alerts-section">
+                        <h3>告警规则</h3>
+                        <div class="rules-grid" id="rulesGrid"></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <div class="toast" id="toast"></div>
+    
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
