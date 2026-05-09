@@ -1,4 +1,4 @@
-# Server Panel
+# Server Panel for AI
 
 一个现代化的服务器管理面板，通过直观的 Web UI 界面实时监控服务器状态和管理系统资源。
 
