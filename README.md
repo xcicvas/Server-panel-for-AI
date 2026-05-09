@@ -72,7 +72,7 @@ pm2 start server/index.js --name server-panel
 ## 项目结构
 
 ```
-Server-panel-for-AI/
+AI-written-Server-Panel/
 ├── server/                    # 后端服务
 │   ├── index.js              # Express 服务器入口
 │   └── routes/               # API 路由模块
