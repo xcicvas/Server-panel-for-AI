@@ -235,7 +235,7 @@ app.get('/', (req, res) => {
 server.listen(PORT, () => {
     console.log(`\n╔══════════════════════════════════════════════════════╗
 ║                                                      ║
-║     Server Panel for AI started                          ║
+║     AI-written Server Panel started                        ║
 ║                                                      ║
 ║     📍 访问地址: http://localhost:${PORT}               ║
 ║                                                      ║
