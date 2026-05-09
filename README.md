@@ -1,10 +1,10 @@
-# Server Panel 🖥️
+# Server Panel
 
 一个现代化的服务器管理面板，通过直观的 Web UI 界面实时监控服务器状态和管理系统资源。
 
 ---
 
-## ✨ 功能特性
+## 功能特性
 
 ### 核心监控
 - **仪表盘** - 实时监控 CPU、内存、磁盘使用情况，附带服务器心情显示和健康评分
@@ -33,13 +33,13 @@
 - **凌晨梦境模式** - 凌晨 2-6 点自动切换夜间主题
 
 ### 主题支持
-- 🌞 浅色主题
-- 🌙 深色主题
-- 🌸 粉色主题
+- 浅色主题
+- 深色主题
+- 粉色主题
 
 ---
 
-## 🚀 快速开始
+## 快速开始
 
 ### 环境要求
 - Node.js >= 18.0.0
@@ -69,7 +69,7 @@ pm2 start server/index.js --name server-panel
 
 ---
 
-## 📁 项目结构
+## 项目结构
 
 ```
 Server-panel-for-AI/
@@ -104,7 +104,7 @@ Server-panel-for-AI/
 
 ---
 
-## 🔌 API 接口
+## API 接口
 
 ### 系统信息
 
@@ -170,9 +170,18 @@ Server-panel-for-AI/
 | `/api/configs` | GET | 查看配置文件 |
 | `/api/benchmark` | GET/POST | 性能基准测试 |
 
+### 认证接口
+
+| 接口 | 方法 | 说明 |
+|------|------|------|
+| `/api/auth/login` | POST | 登录（需要密码） |
+| `/api/auth/logout` | POST | 退出登录 |
+| `/api/auth/status` | GET | 获取登录状态 |
+| `/api/auth/change-password` | POST | 修改密码 |
+
 ---
 
-## 🎨 主题配置
+## 主题配置
 
 面板支持三种主题模式，可通过页面右上角的主题切换按钮切换：
 
@@ -184,13 +193,13 @@ Server-panel-for-AI/
 
 ---
 
-## 🌙 凌晨梦境模式
+## 凌晨梦境模式
 
 面板会在凌晨 2:00 - 6:00 自动切换到夜间主题模式，为您的深夜运维提供更舒适的视觉体验。
 
 ---
 
-## ⚠️ 安全警告
+## 安全警告
 
 **重要提示：本项目约 90% 的代码由 AI 生成**
 
@@ -205,7 +214,7 @@ Server-panel-for-AI/
 
 ---
 
-## 📄 License
+## License
 
 MIT License
 
@@ -213,7 +222,7 @@ MIT License
 
 ---
 
-## 🤝 贡献
+## 贡献
 
 欢迎提交 Issue 和 Pull Request！
 
