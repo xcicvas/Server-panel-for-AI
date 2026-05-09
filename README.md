@@ -48,7 +48,7 @@
 ### 安装依赖
 
 ```bash
-cd Server-panel-for-AI
+cd AI‑writtenServerpanel
 npm install
 ```
 
